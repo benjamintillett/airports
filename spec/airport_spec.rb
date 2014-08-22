@@ -33,15 +33,20 @@ describe Airport do
     it 'Can land a plane' do
     	expect(airport.land(plane)).not_to eq nil
     end
-    it 'will not land a plane if full' do 
-    	expect(full_airport.land(plane)).to eq nil
-    end
-
 
     it 'has the plane after landing' do 
     	airport.land(plane)
     	expect(airport).to have_plane(plane)
     end
+    
+    it 'will not land a plane if full' do 
+    	expect(full_airport.land(plane)).to eq nil
+    end
+    it "does not have plane after failed landing attempt" do 
+    	full_airport.land(plane)
+    	expect(airport).not_to have_plane(plane)
+    end
+
 
     it 'a plane can take off' do
     	expect(airport.take_off(plane)).to be true
