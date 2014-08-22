@@ -1,5 +1,6 @@
 require 'airport'
 require 'plane'
+require 'weather_spec'
  
 # A plane currently in the airport can be requested to take off.
 #
@@ -8,16 +9,17 @@ require 'plane'
 #
 # If the airport is full then no planes can land
 describe Airport do
+
+  include_examples "the weather"
   let(:airport) { Airport.new }
   let(:plane) { double :plane }
   let(:full_airport) { Airport.new }
-  let(:half_full_airport) { Airport.new }
+  let(:half_full_airport) { Airport.new }  
 
   before do 
-  	full_airport.capacity.times { full_airport.land(double :plane) }
-  	(half_full_airport.capacity)/2.times { half_full_airport.land(double :plane) }
+ 	fill_airport(full_airport)
+  	(half_full_airport.capacity)/2.times { half_full_airport.land(double :plane) } 	 
   end
-  
 
   context "self knowlage: " do 
   	it 'knows when its full' do 
@@ -30,6 +32,9 @@ describe Airport do
 
   
   context 'taking off and landing' do
+
+  	before { allow_any_instance_of(Airport).to receive(:stormy?).and_return( false) }
+
     it 'Can land a plane' do
     	expect(airport.land(plane)).not_to eq nil
     end
@@ -42,6 +47,7 @@ describe Airport do
     it 'will not land a plane if full' do 
     	expect(full_airport.land(plane)).to eq nil
     end
+
     it "does not have plane after failed landing attempt" do 
     	full_airport.land(plane)
     	expect(airport).not_to have_plane(plane)
@@ -49,18 +55,20 @@ describe Airport do
 
 
     it 'a plane can take off' do
-    	expect(airport.take_off(plane)).to be true
+    	airport.land(plane)
+    	expect(airport.take_off(plane)).to eq plane
     end
+
+    it 'a plane can not take off if not in airport' do
+    	expect(airport.take_off(plane)).to eq nil
+    end
+    
     
     it 'does not have the plane after take off' do 
     	airport.take_off(plane)
     	expect(airport).not_to have_plane(plane)
     end
   end
-
-  context 'traffic control' do
-    it 'a plane cannot land if the airport is full' do
-    end
     
     # Include a weather condition using a module.
     # The weather must be random and only have two states "sunny" or "stormy".
@@ -70,11 +78,18 @@ describe Airport do
     # If the airport has a weather condition of stormy,
     # the plane can not land, and must not be in the airport
     context 'weather conditions' do
-      it 'a plane cannot take off when there is a storm brewing' do
-      end
       
-      it 'a plane cannot land in the middle of a storm' do
+      it 'a plane cannot take off when there is a storm brewing' do
+      	airport.land(plane)
+      	expect(airport).to receive(:stormy?) { true }
+      	expect(airport.take_off(plane)).to be nil
       end
+    
+      it 'a plane cannot land in the middle of a storm' do
+      	expect(airport).to receive(:stormy?) { true }
+      	expect(airport.land(plane)).to be nil
+      end
+
     end
   end
 end
@@ -106,8 +121,16 @@ end
 # Be careful of the weather, it could be stormy!
 # Check when all the planes have landed that they have the right status "landed"
 # Once all the planes are in the air again, check that they have the status of flying!
+
 describe "The gand finale (last spec)" do
-  it 'all planes can land and all planes can take off' do
-  end
+  	it 'all planes can land and all planes can take off' do
+	end
+end
+
+def fill_airport(airport)
+	  	airport.capacity.times do
+ 			allow(full_airport).to receive(:stormy?).and_return(false)
+ 			full_airport.land(double :plane) 
+ 	end
 end
 

@@ -1,4 +1,8 @@
+require 'weather.rb'
+
 class Airport 
+
+	include Weather
 
 	DEFAULT_CAPACITY = 200
 	attr_accessor :capacity
@@ -9,12 +13,11 @@ class Airport
 	end
 	
 	def land(plane)
-		@planes << plane if !full?
+		@planes << plane  if (!stormy? && !full?)
 	end
 	
 	def take_off(plane)
-		@planes.delete(plane)
-		true		
+		@planes.delete(plane) unless stormy?
 	end
 	
 	def has_plane?(plane)
@@ -24,5 +27,6 @@ class Airport
 	def full?
 		@planes.count == @capacity
 	end
+
 
 end
