@@ -10,12 +10,33 @@ require 'plane'
 describe Airport do
   let(:airport) { Airport.new }
   let(:plane) { double :plane }
+  let(:full_airport) { Airport.new }
+  let(:half_full_airport) { Airport.new }
+
+  before do 
+  	full_airport.capacity.times { full_airport.land(double :plane) }
+  	(half_full_airport.capacity)/2.times { half_full_airport.land(double :plane) }
+  end
+  
+
+  context "self knowlage: " do 
+  	it 'knows when its full' do 
+  		expect(full_airport).to be_full
+  	end
+  	it 'knows when its not full' do 
+  		expect(half_full_airport).not_to be_full
+  	end
+  end
 
   
   context 'taking off and landing' do
     it 'Can land a plane' do
-    	expect(airport.land(plane)).to eq true
+    	expect(airport.land(plane)).not_to eq nil
     end
+    it 'will not land a plane if full' do 
+    	expect(full_airport.land(plane)).to eq nil
+    end
+
 
     it 'has the plane after landing' do 
     	airport.land(plane)
@@ -31,7 +52,7 @@ describe Airport do
     	expect(airport).not_to have_plane(plane)
     end
   end
-  
+
   context 'traffic control' do
     it 'a plane cannot land if the airport is full' do
     end
