@@ -10,7 +10,7 @@ shared_examples "the weather" do
 		expect([:sunny,:stormy]).to include(weather_holder.weather)
 	end
 
-	it 'Changes' do
+	it 'the weather changes' do
 		weather_array = []
 		100.times { weather_array << weather_holder.weather } 
 		expect(weather_array.uniq.length).to eq 2

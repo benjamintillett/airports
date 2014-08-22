@@ -51,24 +51,25 @@ describe Airport do
     it "does not have plane after failed landing attempt" do 
     	full_airport.land(plane)
     	expect(airport).not_to have_plane(plane)
-    end
-
-
-    it 'a plane can take off' do
+    end    
+    
+    it 'can take off  a plane' do
     	airport.land(plane)
     	expect(airport.take_off(plane)).to eq plane
     end
 
-    it 'a plane can not take off if not in airport' do
-    	expect(airport.take_off(plane)).to eq nil
-    end
-    
-    
     it 'does not have the plane after take off' do 
     	airport.take_off(plane)
     	expect(airport).not_to have_plane(plane)
     end
+
+    it 'can not take off if plane is not in airport' do
+    	expect(airport.take_off(plane)).to eq nil
+    end
+
   end
+
+  context 'traffic control' do
     
     # Include a weather condition using a module.
     # The weather must be random and only have two states "sunny" or "stormy".
@@ -77,19 +78,32 @@ describe Airport do
     # This will require stubbing to stop the random return of the weather.
     # If the airport has a weather condition of stormy,
     # the plane can not land, and must not be in the airport
-    context 'weather conditions' do
-      
-      it 'a plane cannot take off when there is a storm brewing' do
+    context 'stormy weather:' do
+	  
+	  before { allow_any_instance_of(Airport).to receive(:stormy?).and_return( true ) }
+
+      it 'a plane cannot take off' do
       	airport.land(plane)
-      	expect(airport).to receive(:stormy?) { true }
       	expect(airport.take_off(plane)).to be nil
       end
     
-      it 'a plane cannot land in the middle of a storm' do
-      	expect(airport).to receive(:stormy?) { true }
+      it 'a plane cannot land' do
       	expect(airport.land(plane)).to be nil
       end
+    end
 
+    context 'good weather:' do
+
+    	before { allow_any_instance_of(Airport).to receive(:stormy?).and_return( false ) }
+
+	    it 'a plane can take off' do
+	    	airport.land(plane)
+	    	expect(airport.take_off(plane)).to eq plane
+	    end
+
+	    it 'a plane can land' do
+    		expect(airport.land(plane)).not_to eq nil
+    	end
     end
   end
 end
