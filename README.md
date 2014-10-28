@@ -12,12 +12,12 @@ For this challange I created a set of classes to model air traffic controll syst
 
 Skills learnt/used
 -----------------
-Rspec
-OOP
-TTD
-Classes 
-Inheritance
-Mixins 
+Rspec,
+OOP,
+TTD,
+Classes, 
+Inheritance,
+Mixins and  
 Test Doubles
 
 
@@ -57,7 +57,7 @@ irb> heathrow = Airport.new
 irb> concorde = Plane.new
 irb> heathrow.land(concorde)
 ```
-Check the source code for what thing you can do ("watch out for the weather")
+Check the source code for what you can do with the planes. ("watch out for the weather")
 
 
 
